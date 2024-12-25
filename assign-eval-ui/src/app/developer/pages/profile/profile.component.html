@@ -1,0 +1,268 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="card px-6 py-6">
+      <p-toast></p-toast>
+
+
+
+      <p-table
+      #developerTable
+      [value]="filteredDevelopers"
+      responsiveLayout="scroll"
+      [rows]="10"
+      [globalFilterFields]="['firstname', 'lastname', 'email', 'available', 'createdAt']"
+      [paginator]="true"
+      [rowsPerPageOptions]="rowsPerPageOptions"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [(selection)]="selectedDevelopers"
+      selectionMode="multiple"
+      [rowHover]="true"
+      dataKey="id">
+        
+        <!-- Caption for Table -->
+        <ng-template pTemplate="caption">
+          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <h5 class="m-0">My Profile</h5>
+          </div>
+        </ng-template>
+    
+        <!-- Header for Table -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+            <!-- Single 'Name' column with avatar -->
+            <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+            <th>Portfolio</th>
+            <th pSortableColumn="available">Available <p-sortIcon field="available"></p-sortIcon></th>
+            <th pSortableColumn="createdAt">Created At <p-sortIcon field="createdAt"></p-sortIcon></th>
+          </tr>
+        </ng-template>
+    
+        <!-- Body for Table -->
+        <ng-template pTemplate="body" let-developer>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="developer"></p-tableCheckbox>
+            </td>
+            <td>
+              <a [routerLink]="['/developer/my-profile/profile-details', developer.id]" class="text-purple-500 hover:underline font-medium">
+                {{ developer.id || 'N/A' }}
+              </a>
+              
+            
+            </td>
+            <!-- Combined Name with avatar -->
+            <td class="w-32 min-w-[10rem]">
+              <div class="flex items-center">
+                <p-avatar [image]="developer.avatar || 'https://cdn-icons-png.flaticon.com/512/10542/10542486.png'" class="mr-2" size="large"></p-avatar>
+                <a
+                  [routerLink]="['/pages/developers', developer.id]"
+                  class="text-blue-500 hover:underline font-medium">
+                  {{ developer.firstname }} {{ developer.lastname }}
+                </a>
+              </div>
+            </td>
+            <td>
+              {{ developer.email || 'N/A' }}
+            </td>
+            <td>
+              <a
+                [href]="developer.portfolio || '#'"
+                target="_blank"
+                class="text-blue-500 hover:underline font-medium">
+                {{ developer.portfolio || 'N/A' }}
+              </a>
+            </td>
+            <td style="width:14%; min-width:10rem;">
+              <span class="p-column-title">Available</span>
+              <span [class]="'project-badge status-' + (developer.available ? 'available' : 'notavailable')">
+                {{ developer.available ? 'Available' : 'Not Available' }}
+              </span>
+            </td>
+            
+            
+            <td>
+              <span class="p-column-title">Created At</span>
+              {{ developer.createdAt | date:'mediumDate' }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Developer Dialog -->
+    <p-dialog
+      [(visible)]="developerDialog"
+      [style]="{width: '700px'}"
+      header="{{ isEditMode ? 'Edit Developer' : 'New Developer' }}"
+      [modal]="true"
+      class="p-fluid">
+      <ng-template pTemplate="content">
+        <!-- Form Fields -->
+        <div class="grid grid-nogutter with-gap" style="grid-template-columns: repeat(2, 1fr);">
+          
+          <!-- Hidden ID Field -->
+          <input type="hidden" [(ngModel)]="developerRoleId" name="roleIds" />
+
+      
+          <!-- First Name Field -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field">
+              <label for="firstname">First Name</label>
+              <input
+                type="text"
+                pInputText
+                id="firstname"
+                [(ngModel)]="developer.firstname"
+                name="firstname"
+                required
+                [ngClass]="{'ng-invalid ng-dirty': submitted && !developer.firstname}"
+                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <small
+                class="ng-dirty ng-invalid mt-1 block text-sm text-red-600"
+                *ngIf="submitted && !developer.firstname">
+                First name is required.
+              </small>
+            </div>
+          </div>
+      
+          <!-- Last Name Field -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field">
+              <label for="lastname">Last Name</label>
+              <input
+                type="text"
+                pInputText
+                id="lastname"
+                [(ngModel)]="developer.lastname"
+                name="lastname"
+                required
+                [ngClass]="{'ng-invalid ng-dirty': submitted && !developer.lastname}"
+                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <small
+                class="ng-dirty ng-invalid mt-1 block text-sm text-red-600"
+                *ngIf="submitted && !developer.lastname">
+                Last name is required.
+              </small>
+            </div>
+          </div>
+      
+          <!-- Email Field -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field">
+              <label for="email">Email</label>
+              <input
+                type="email"
+                pInputText
+                id="email"
+                [(ngModel)]="developer.email"
+                name="email"
+                required
+                [ngClass]="{'ng-invalid ng-dirty': submitted && !developer.email}"
+                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <small
+                class="ng-dirty ng-invalid mt-1 block text-sm text-red-600"
+                *ngIf="submitted && !developer.email">
+                Email is required.
+              </small>
+            </div>
+          </div>
+      
+          <!-- Portfolio Field -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field">
+              <label for="portfolio">Portfolio</label>
+              <input
+                type="url"
+                pInputText
+                id="portfolio"
+                [(ngModel)]="developer.portfolio"
+                name="portfolio"
+                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+            </div>
+          </div>
+      
+          <!-- Availability Checkbox -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field flex items-center">
+              <p-checkbox
+                id="available"
+                [binary]="true"
+                [(ngModel)]="developer.available"
+                name="available"
+                inputId="availableCheckbox"
+                [ngModelOptions]="{standalone: true}"
+                [ngClass]="{'ng-invalid ng-dirty': submitted && developer.available === undefined}"
+                class="mr-2">
+              </p-checkbox>
+              <label for="availableCheckbox" class="ml-2">Available</label>
+            </div>
+            <small
+              class="ng-dirty ng-invalid mt-1 block text-sm text-red-600"
+              *ngIf="submitted && developer.available === undefined">
+              Availability is required.
+            </small>
+          </div>
+      
+          <!-- Skills Multi-Select Field -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field">
+              <label for="skills">Skills</label>
+              <p-multiSelect
+              id="skills"
+              [options]="skillsOptions"
+              optionLabel="name"
+              optionValue="id"
+              [(ngModel)]="formSelectedSkills"
+              name="skills"
+              placeholder="Select Skills"
+              [maxSelectedLabels]="3"
+              class="w-full"
+              display="chip"
+              appendTo="body"
+              [ngModelOptions]="{standalone: true}"
+              required>
+            </p-multiSelect>
+            
+            
+              <small
+                class="ng-dirty ng-invalid mt-1 block text-sm text-red-600"
+                *ngIf="submitted && formSelectedSkills.length === 0">
+                At least one skill is required.
+              </small>
+            </div>
+          </div>
+      
+          <!-- Password Field -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                pInputText
+                id="password"
+                [(ngModel)]="developer.password"
+                name="password"
+                required
+                [ngClass]="{'ng-invalid ng-dirty': submitted && !developer.password}"
+                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <small
+                class="ng-dirty ng-invalid mt-1 block text-sm text-red-600"
+                *ngIf="submitted && !developer.password">
+                Password is required.
+              </small>
+            </div>
+          </div>
+      
+        </div>
+      </ng-template>
+      
+    </p-dialog>
+    
+  </div>
+</div>

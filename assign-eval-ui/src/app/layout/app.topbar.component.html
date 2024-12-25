@@ -1,0 +1,30 @@
+<div class="layout-topbar">
+    <a class="layout-topbar-logo" routerLink="">
+        <img 
+            src="https://candidature.uir.ac.ma/images/logo-uir-dark.png" 
+            alt="logo"
+        >
+        <span class="text-lg text-custom">Assign-Eval</span>
+    </a>
+    <!-- Menu Toggle Button -->
+    <button 
+        #menubutton 
+        class="p-link layout-menu-button layout-topbar-button" 
+        (click)="layoutService.onMenuToggle()"
+    >
+        <i class="pi pi-bars"></i>
+    </button>
+
+    <!-- User Icon with Dropdown -->
+    <div class="layout-topbar-menu">
+        <p-menu #userMenu [model]="menuItems" [popup]="true"></p-menu>
+        <button 
+            #userMenuButton 
+            class="p-link layout-topbar-button" 
+            (click)="userMenu.toggle($event)"
+        >
+            <i class="pi pi-user"></i>
+            <span>Profile</span>
+        </button>
+    </div>
+</div>

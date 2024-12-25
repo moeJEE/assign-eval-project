@@ -1,0 +1,101 @@
+<h1>Developer Dashboard</h1>
+
+<div class="grid">
+    <!-- Projects Count -->
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Projects</span>
+                    <div class="text-900 font-medium text-xl">{{ projects?.length || 0 }}</div>
+                </div>
+                <div class="flex align-items-center justify-content-center bg-blue-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-folder text-blue-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium">{{ newProjectsCount ? newProjectsCount : 0 }} new </span>
+            <span class="text-500">assigned to you</span>
+        </div>
+    </div>
+
+    <!-- Skills Count -->
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Skills</span>
+                    <div class="text-900 font-medium text-xl">{{ skills?.length || 0 }}</div>
+                </div>
+                <div class="flex align-items-center justify-content-center bg-cyan-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-cog text-cyan-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium">{{ newSkillsCount ? newSkillsCount : 0 }} added </span>
+            <span class="text-500">recently</span>
+        </div>
+    </div>
+
+    <!-- Evaluations Count -->
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Evaluations</span>
+                    <div class="text-900 font-medium text-xl">{{ evaluations?.length || 0 }}</div>
+                </div>
+                <div class="flex align-items-center justify-content-center bg-purple-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-star text-purple-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium">{{ newEvaluationsCount ? newEvaluationsCount : 0 }} new </span>
+            <span class="text-500">evaluations</span>
+        </div>
+    </div>
+
+    <!-- Performance -->
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Performance</span>
+                    <div class="text-900 font-medium text-xl">{{ performanceRating }}</div>
+                </div>
+                <div class="flex align-items-center justify-content-center bg-teal-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-chart-line text-teal-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium">{{ performanceImprovement }} </span>
+            <span class="text-500">since last evaluation</span>
+        </div>
+    </div>
+</div>
+<!-- Chart & Skills Overview -->
+<div class="grid">
+    <!-- Projects Overview -->
+    <div class="col-12 xl:col-6">
+        <div class="card">
+            <h5>Your Projects Overview</h5>
+            <p-chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
+        </div>
+    </div>
+
+    <!-- Skills Overview -->
+    <div class="col-12 xl:col-6">
+        <div class="card">
+            <h5>Your Skills</h5>
+            <ul class="list-none p-0 m-0">
+                <li *ngFor="let skill of skills" class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <i class="pi pi-cog text-cyan-500 text-xl mr-2"></i>
+                        <div>
+                            <span class="text-900 font-medium">{{ skill.name }}</span>
+                            <div class="text-600">{{ skill.description || 'No description available' }}</div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+

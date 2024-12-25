@@ -1,0 +1,117 @@
+<div class="grid">
+  <div class="col-12">
+      <div class="card px-6 py-6">
+          <p-toast></p-toast>
+  
+
+          <div class="flex justify-content-end align-items-center mb-4">
+            <span class="block p-input-icon-left mr-2">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="onGlobalFilter($event, dt)" placeholder="Search..." class="w-full sm:w-auto"/>
+            </span>
+        </div>
+
+          <p-table
+              #dt
+              [value]="projects"
+              [columns]="cols"
+              responsiveLayout="scroll"
+              [rows]="10"
+              [globalFilterFields]="['code', 'title', 'status', 'projectManager.fullName', 'developers.fullName']"
+              [paginator]="true"
+              [rowsPerPageOptions]="[10,20,30]"
+              [showCurrentPageReport]="true"
+              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+              [(selection)]="selectedProjects"
+              selectionMode="multiple"
+              [rowHover]="true"
+              dataKey="id">
+
+              <ng-template pTemplate="caption">
+                <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                    <h5 class="m-0">List Projects</h5>
+                </div>
+            </ng-template>
+              
+              <!-- Header for Table -->
+              <ng-template pTemplate="header">
+                  <tr>
+                      <th style="width: 3rem">
+                          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+                          {{ col.header }} <p-sortIcon [field]="col.field"></p-sortIcon>
+                      </th>
+                  </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-project>
+                  <tr>
+                      <td>
+                          <p-tableCheckbox [value]="project"></p-tableCheckbox>
+                      </td>
+                      <td class="w-32 min-w-[10rem]">
+                          <a [routerLink]="['/developer/projects/project-details', project.id]" class="text-purple-500 hover:underline font-medium">
+                              {{ project.code }}
+                          </a>
+                      </td>
+                      <td class="w-32 min-w-[10rem]">
+                          <div class="flex items-center">
+                              <p-avatar 
+                                  label="{{ project.title ? project.title.charAt(0).toUpperCase() : '?' }}" 
+                                  class="mr-2" 
+                                  size="large" 
+                                  shape="circle" 
+                                  pTooltip="{{ project.title }}">
+                              </p-avatar>
+                              <!-- <span class="font-medium">{{ project.title }}</span> -->
+                              <td class="w-32 min-w-[10rem]">
+                                <a [routerLink]="['/developer/pages/projects/project-details', project.title]" class="text-purple-500 hover:underline font-medium">
+                                    {{ project.title }}
+                                </a>
+                            </td>
+                          </div>
+                      </td>
+                      <td style="width:14%; min-width:10rem;">
+                          <span [class]="'project-badge status-' + (project.status.toLowerCase()?.replace(' ', '') || 'default')">
+                              {{ project.status.replace('_', ' ') }}
+                          </span>
+                      </td>
+                      <td style="width:14%; min-width:10rem;">
+                          {{ project.projectManager?.firstname || 'N/A' }} {{ project.projectManager?.lastname || '' }}
+                      </td>
+                      <td style="width:14%; min-width:10rem;">
+                          <p-avatarGroup>
+                              <p-avatar 
+                                  *ngFor="let dev of project.developers.slice(0, 3)" 
+                                  [image]="dev.avatar || 'https://cdn-icons-png.flaticon.com/512/10542/10542486.png'" 
+                                  pTooltip="{{ dev.firstname + ' ' + dev.lastname }}" 
+                                  size="large" 
+                                  shape="circle">
+                              </p-avatar>
+                              <p-avatar 
+                                  *ngIf="project.developers.length > 3" 
+                                  label="+{{ project.developers.length - 3 }}" 
+                                  shape="circle" 
+                                  size="large"
+                                  styleClass="bg-gray-200 text-black">
+                              </p-avatar>
+                          </p-avatarGroup>
+                      </td>
+                      <td style="width:14%; min-width:10rem;">{{ project.startDate }}</td>
+                      <td style="width:14%; min-width:10rem;">{{ project.endDate }}</td>
+
+                  </tr>
+              </ng-template>
+              
+              <ng-template pTemplate="emptymessage">
+                  <tr>
+                      <td colspan="9" class="text-center p-4">No projects found.</td>
+                  </tr>
+              </ng-template>
+          </p-table>
+
+      
+      </div>
+  </div>
+</div>

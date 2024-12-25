@@ -1,0 +1,29 @@
+
+
+/* Add any additional styles if needed */
+.project-badge {
+  padding: 0.125rem 0.25rem;
+  border-radius: 4px;
+  color: #fff;
+  font-weight: bold;
+  text-transform: capitalize;
+  font-size: 0.875rem;
+}
+  
+  .status-available {
+    background-color: #10b981; /* Tailwind Green-500 */
+  }
+  
+  .status-notavailable {
+    background-color: #ef4444; /* Tailwind Red-500 */
+  }
+  
+  .status-default {
+    background-color: #6b7280; /* Tailwind Gray-500 */
+  }
+  
+
+  .selected-skills {
+    position: relative;
+    z-index: 1;
+  }

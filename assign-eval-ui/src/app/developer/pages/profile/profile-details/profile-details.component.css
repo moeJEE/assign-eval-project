@@ -1,0 +1,19 @@
+
+.project-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+  }
+  
+  .status-available {
+    background-color: #10b981; /* Tailwind Green-500 */
+  }
+  
+  .status-notavailable {
+    background-color: #ef4444; /* Tailwind Red-500 */
+  }
+  
+  .status-default {
+    background-color: #6b7280; /* Tailwind Gray-500 */
+  }
+  

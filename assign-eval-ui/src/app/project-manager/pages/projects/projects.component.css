@@ -1,0 +1,35 @@
+.project-badge {
+    padding: 0.125rem 0.25rem;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    text-transform: capitalize;
+    font-size: 0.875rem;
+}
+
+.status-in_progress {
+    background-color: #ffc107;
+}
+
+.status-completed {
+    background-color: #28a745;
+}
+
+.status-review {
+    background-color: #17a2b8;
+}
+
+.status-default {
+    background-color: #6c757d;
+}
+
+.p-avatar-group .p-avatar {
+    border: 2px solid #fff;
+}
+
+/* Adjust margin for avatar sizes */
+.p-avatar {
+    margin-right: 0.5rem;
+}
+
+

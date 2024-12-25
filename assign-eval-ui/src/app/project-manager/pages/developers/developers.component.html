@@ -1,0 +1,446 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="card px-6 py-6">
+      <p-toast></p-toast>
+      <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+          <div class="my-2">
+            <button
+              pButton
+              pRipple
+              label="New Developer"
+              icon="pi pi-plus"
+              class="p-button-success mr-2"
+              (click)="openNew()">
+            </button>
+            <button
+              pButton
+              pRipple
+              label="Delete"
+              icon="pi pi-trash"
+              class="p-button-danger"
+              (click)="deleteSelectedDevelopers()"
+              [disabled]="!selectedDevelopers || !selectedDevelopers.length">
+            </button>
+          </div>
+        </ng-template>
+      </p-toolbar>
+
+      <!-- Filters -->
+      <div class="flex flex-wrap mb-4">
+        <!-- Skills Filter MultiSelect -->
+        <div class="mr-4 mb-2">
+          <p-multiSelect 
+            [options]="skillsOptions" 
+            [(ngModel)]="filterSelectedSkills" 
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Filter by Skills" 
+            [ngModelOptions]="{standalone: true}"
+            (onChange)="applyFilters()">
+          </p-multiSelect>
+        </div>
+        
+   <!-- Availability Filter Dropdown -->
+<div class="mr-4 mb-2">
+  <p-dropdown
+    [options]="availabilityOptions"
+    [(ngModel)]="availableFilter"
+    name="availableFilter"
+    placeholder="Filter by Availability"
+    optionLabel="label"
+    optionValue="value"
+    [ngModelOptions]="{standalone: true}"
+    (onChange)="applyFilters()">
+  </p-dropdown>
+</div>
+
+
+        
+        <!-- Global Search -->
+        <div class="flex-1 mb-2">
+          <span class="block p-input-icon-left w-full sm:w-auto">
+            <i class="pi pi-search"></i>
+            <input
+            pInputText
+            type="text"
+            (input)="onGlobalFilter($event)"
+            placeholder="Search..."
+            class="w-full sm:w-auto"/>
+          </span>
+        </div>
+        
+        <!-- Clear Filters Button -->
+        <div class="mb-2">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-filter-slash"
+            label="Clear Filters"
+            class="p-button-text"
+            (click)="clearFilters()">
+          </button>
+        </div>
+      </div>
+
+      <p-table
+      #developerTable
+      [value]="filteredDevelopers"
+      responsiveLayout="scroll"
+      [rows]="10"
+      [globalFilterFields]="['firstname', 'lastname', 'email', 'available', 'createdAt']"
+      [paginator]="true"
+      [rowsPerPageOptions]="rowsPerPageOptions"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [(selection)]="selectedDevelopers"
+      selectionMode="multiple"
+      [rowHover]="true"
+      dataKey="id">
+        
+        <!-- Caption for Table -->
+        <ng-template pTemplate="caption">
+          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <h5 class="m-0">Manage Developers</h5>
+          </div>
+        </ng-template>
+    
+        <!-- Header for Table -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+            <!-- Single 'Name' column with avatar -->
+            <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+            <th>Portfolio</th>
+            <th pSortableColumn="available">Available <p-sortIcon field="available"></p-sortIcon></th>
+            <th pSortableColumn="createdAt">Created At <p-sortIcon field="createdAt"></p-sortIcon></th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+    
+        <!-- Body for Table -->
+        <ng-template pTemplate="body" let-developer>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="developer"></p-tableCheckbox>
+            </td>
+            <td>
+              <a
+              [routerLink]="['/project-manager/pages/developers/developer-details', developer.id]"
+              class="text-purple-500 hover:underline font-medium">
+              {{ developer.id || 'N/A' }}
+            </a>
+            
+            </td>
+            <!-- Combined Name with avatar -->
+            <td class="w-32 min-w-[10rem]">
+              <div class="flex items-center">
+                <p-avatar [image]="developer.avatar || 'https://cdn-icons-png.flaticon.com/512/10542/10542486.png'" class="mr-2" size="large"></p-avatar>
+                <a
+                  [routerLink]="['/pages/developers', developer.id]"
+                  class="text-blue-500 hover:underline font-medium">
+                  {{ developer.firstname }} {{ developer.lastname }}
+                </a>
+              </div>
+            </td>
+            <td>
+              {{ developer.email || 'N/A' }}
+            </td>
+            <td>
+              <a
+                [href]="developer.portfolio || '#'"
+                target="_blank"
+                class="text-blue-500 hover:underline font-medium">
+                {{ developer.portfolio || 'N/A' }}
+              </a>
+            </td>
+            <td style="width:14%; min-width:10rem;">
+              <span class="p-column-title">Available</span>
+              <span [class]="'project-badge status-' + (developer.available ? 'available' : 'notavailable')">
+                {{ developer.available ? 'Available' : 'Not Available' }}
+              </span>
+            </td>
+            
+            
+            <td>
+              <span class="p-column-title">Created At</span>
+              {{ developer.createdAt | date:'mediumDate' }}
+            </td>
+            <td>
+              <div class="flex">
+                <button
+                  pButton
+                  pRipple
+                  icon="pi pi-pencil"
+                  class="p-button-rounded p-button-success mr-2"
+                  (click)="editDeveloper(developer)">
+                </button>
+                <button
+                  pButton
+                  pRipple
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-warning"
+                  (click)="deleteDeveloper(developer)">
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Developer Dialog -->
+    <p-dialog
+      [(visible)]="developerDialog"
+      [style]="{width: '700px'}"
+      header="{{ isEditMode ? 'Edit Developer' : 'New Developer' }}"
+      [modal]="true"
+      class="p-fluid">
+      <ng-template pTemplate="content">
+        <!-- Form Fields -->
+        <div class="grid grid-nogutter with-gap" style="grid-template-columns: repeat(2, 1fr);">
+          
+          <!-- Hidden ID Field -->
+          <input type="hidden" [(ngModel)]="developerRoleId" name="roleIds" />
+
+      
+          <!-- First Name Field -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field">
+              <label for="firstname">First Name</label>
+              <input
+                type="text"
+                pInputText
+                id="firstname"
+                [(ngModel)]="developer.firstname"
+                name="firstname"
+                required
+                [ngClass]="{'ng-invalid ng-dirty': submitted && !developer.firstname}"
+                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <small
+                class="ng-dirty ng-invalid mt-1 block text-sm text-red-600"
+                *ngIf="submitted && !developer.firstname">
+                First name is required.
+              </small>
+            </div>
+          </div>
+      
+          <!-- Last Name Field -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field">
+              <label for="lastname">Last Name</label>
+              <input
+                type="text"
+                pInputText
+                id="lastname"
+                [(ngModel)]="developer.lastname"
+                name="lastname"
+                required
+                [ngClass]="{'ng-invalid ng-dirty': submitted && !developer.lastname}"
+                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <small
+                class="ng-dirty ng-invalid mt-1 block text-sm text-red-600"
+                *ngIf="submitted && !developer.lastname">
+                Last name is required.
+              </small>
+            </div>
+          </div>
+      
+          <!-- Email Field -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field">
+              <label for="email">Email</label>
+              <input
+                type="email"
+                pInputText
+                id="email"
+                [(ngModel)]="developer.email"
+                name="email"
+                required
+                [ngClass]="{'ng-invalid ng-dirty': submitted && !developer.email}"
+                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <small
+                class="ng-dirty ng-invalid mt-1 block text-sm text-red-600"
+                *ngIf="submitted && !developer.email">
+                Email is required.
+              </small>
+            </div>
+          </div>
+      
+          <!-- Portfolio Field -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field">
+              <label for="portfolio">Portfolio</label>
+              <input
+                type="url"
+                pInputText
+                id="portfolio"
+                [(ngModel)]="developer.portfolio"
+                name="portfolio"
+                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+            </div>
+          </div>
+      
+          <!-- Availability Checkbox -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field flex items-center">
+              <p-checkbox
+                id="available"
+                [binary]="true"
+                [(ngModel)]="developer.available"
+                name="available"
+                inputId="availableCheckbox"
+                [ngModelOptions]="{standalone: true}"
+                [ngClass]="{'ng-invalid ng-dirty': submitted && developer.available === undefined}"
+                class="mr-2">
+              </p-checkbox>
+              <label for="availableCheckbox" class="ml-2">Available</label>
+            </div>
+            <small
+              class="ng-dirty ng-invalid mt-1 block text-sm text-red-600"
+              *ngIf="submitted && developer.available === undefined">
+              Availability is required.
+            </small>
+          </div>
+      
+          <!-- Skills Multi-Select Field -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field">
+              <label for="skills">Skills</label>
+              <p-multiSelect
+              id="skills"
+              [options]="skillsOptions"
+              optionLabel="name"
+              optionValue="id"
+              [(ngModel)]="formSelectedSkills"
+              name="skills"
+              placeholder="Select Skills"
+              [maxSelectedLabels]="3"
+              class="w-full"
+              display="chip"
+              appendTo="body"
+              [ngModelOptions]="{standalone: true}"
+              required>
+            </p-multiSelect>
+            
+            
+              <small
+                class="ng-dirty ng-invalid mt-1 block text-sm text-red-600"
+                *ngIf="submitted && formSelectedSkills.length === 0">
+                At least one skill is required.
+              </small>
+            </div>
+          </div>
+      
+          <!-- Password Field -->
+          <div class="col-6" style="padding: 0 8px;">
+            <div class="field">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                pInputText
+                id="password"
+                [(ngModel)]="developer.password"
+                name="password"
+                required
+                [ngClass]="{'ng-invalid ng-dirty': submitted && !developer.password}"
+                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <small
+                class="ng-dirty ng-invalid mt-1 block text-sm text-red-600"
+                *ngIf="submitted && !developer.password">
+                Password is required.
+              </small>
+            </div>
+          </div>
+      
+        </div>
+      </ng-template>
+      
+    
+      <ng-template pTemplate="footer">
+        <button
+          pButton
+          pRipple
+          label="Cancel"
+          icon="pi pi-times"
+          class="p-button-text"
+          (click)="hideDialog()">
+        </button>
+        <button
+          pButton
+          pRipple
+          label="Save"
+          icon="pi pi-check"
+          class="p-button-text"
+          (click)="saveDeveloper()">
+        </button>
+      </ng-template>
+    </p-dialog>
+    
+    <!-- Delete Developer Dialog -->
+    <p-dialog
+      [(visible)]="deleteDeveloperDialog"
+      header="Confirm"
+      [modal]="true"
+      [style]="{width:'450px'}">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span *ngIf="currentDeveloper">
+          Are you sure you want to delete <b>{{currentDeveloper.firstname}} {{currentDeveloper.lastname}}</b>?
+        </span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button
+          pButton
+          pRipple
+          icon="pi pi-times"
+          class="p-button-text"
+          label="No"
+          (click)="deleteDeveloperDialog = false">
+        </button>
+        <button
+          pButton
+          pRipple
+          icon="pi pi-check"
+          class="p-button-text"
+          label="Yes"
+          (click)="confirmDelete()">
+        </button>
+      </ng-template>
+    </p-dialog>
+
+    <!-- Delete Selected Developers Dialog -->
+    <p-dialog
+      [(visible)]="deleteDevelopersDialog"
+      header="Confirm"
+      [modal]="true"
+      [style]="{width:'450px'}">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span>Are you sure you want to delete the selected developers?</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button
+          pButton
+          pRipple
+          icon="pi pi-times"
+          class="p-button-text"
+          label="No"
+          (click)="deleteDevelopersDialog = false">
+        </button>
+        <button
+          pButton
+          pRipple
+          icon="pi pi-check"
+          class="p-button-text"
+          label="Yes"
+          (click)="confirmDeleteSelected()">
+        </button>
+      </ng-template>
+    </p-dialog>
+  </div>
+</div>
