@@ -1,0 +1,15 @@
+# Ignore node_modules in the Angular project
+**/node_modules/
+
+# Ignore Java IDE folders (like .idea or .vscode)
+**/.idea/
+**/.vscode/
+
+# Ignore compiled Java files in the Spring project
+**/target/
+
+# Ignore log files
+*.log
+
+# Ignore environment variables (if you have any .env files)
+.env
